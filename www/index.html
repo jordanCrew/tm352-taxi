@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <!--
+	/***********
+	 * OU TM352 Block 3, TMA03: index.html
+	 *
+	 * To function correctly this file must be placed in a Cordova project and the appopriate plugins installed.
+	 * You need to complete the code which is commented with TODO.
+	 *
+	 * Released by Chris Thomson / Stephen Rice: Dec 2020
+	 * Modified and submitted by (your name here)
+	 ************/
+ --->
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+    <title>Taxi Sharing</title>
+  </head>
+  <body>
+    <h1>Taxi Sharing</h1>
+    <div>
+      <!--- TODO: add text and form entry methods to capture required data -->
+      <form class="register" action="index.html" method="post">
+        <fieldset>
+          <legend>Register</legend>
+            <label for="oucu">OUCU</label>
+            <input type="text" name="oucu" value="">
+            <input type="button" name="register-submit" value="Register">
+        </fieldset>
+      </form>
+      <form class="share" action="index.html" method="post">
+        <fieldset>
+          <legend>Offer a ride</legend>
+          <label for="start-date-time">When will the car be available</label>
+          <input type="datetime-local" name="start-date-time" value="">
+          <label for="wait-time">How long will you wait</label>
+          <input type="time" name="wait-time" value="">
+          <label for="pick-up">The pick-up address</label>
+          <select name="pick-up">
+            <option hidden disabled selected value="">select an option</option>
+            <option value="station">Milton Keynes Central Station</option>
+            <option value="campus">Open University Campus</option>
+          </select>
+        </fieldset>
+      </form>
+      <form class="request" action="index.html" method="post">
+        <fieldset>
+          <legend>Request a ride</legend>
+          <label for="start-date-time">When to you need it</label>
+          <input type="datetime-local" name="start-date-time" value="">
+          <label for="pick-up">The pick-up address</label>
+          <select name="pick-up">
+            <option hidden disabled selected value="">select an option</option>
+            <option value="station">Milton Keynes Central Station</option>
+            <option value="campus">Open University Campus</option>
+          </select>
+        </fieldset>
+      </form>
+    </div>
+    <div>
+      <!--- TODO: add buttons to allow the various functional requirements to be enacted -->
+      <input type="button" name="share" value="Share a ride">
+      <input type="button" name="request" value="Request a ride">
+      <input type="button" name="cancel" value="Cancel all offers/requests">
+      <input type="button" name="update-map" value="Update map">
+    </div>
+    <!--- TODO: add a placeholder for the HERE Map -->
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/helpers.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+  </body>
+</html>
