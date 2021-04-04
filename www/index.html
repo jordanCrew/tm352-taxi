@@ -30,49 +30,45 @@
   <h1>Taxi Sharing</h1>
   <div>
     <!--- TODO: add text and form entry methods to capture required data -->
-    <!-- A form added with a single field to collect OUCU name for registration-->
-    <form id="register" action="index.html">
-      <fieldset>
+    <!-- Registration input element to collect OUCU -->
         <legend>Register</legend>
         <div class="field-wrapper"></div>
           <label for="oucu">OUCU</label>
-          <input type="text" name="oucu" value="">
+          <input id="oucu" type="text" name="oucu" value="">
         </div>
-        <button onclick="this.registerUser = function (){}">Register</button>
-      </fieldset>
-    </form>
-    <!-- A form added to collect required ride info-->
-    <form id="ride-info" action="index.html">
-      <fieldset>
+        <button onclick="controller.registerUser()">Register</button>
+    <!-- Ride information input elements to collect required information -->
         <legend>Ride info</legend>
+        <!-- collect time the car will be available -->
         <div class="field-wrapper">
           <label for="time">When will the car be available</label>
-          <input type="datetime-local" name="time" value="">
+          <input id="time" type="datetime-local" name="time" value="">
         </div>
+        <!-- collect how long you will wait -->
         <div class="field-wrapper">
-          <label for="hours">How long will you wait</label>
-          <input type="time" name="hours" value="">
+          <label for="hours">How long will you wait (hrs)</label>
+          <input id="hours" type="number" name="hours" value="">
         </div>
+        <!-- collect pick-up address -->
         <div class="field-wrapper">
           <label for="addr">The pick-up address</label>
-          <select name="addr">
+          <select id="addr" name="addr">
             <option hidden disabled selected value="">select an option</option>
             <option value="station">Milton Keynes Central Station</option>
             <option value="campus">Open University Campus</option>
           </select>
         </div>
-      </fieldset>
    </div>
   <div class="actions">
     <!--- TODO: add buttons to allow the various functional requirements to be enacted -->
-    <!-- when clicked call offerTaxi function-->
-    <button onclick="this.offerTaxi = function(){}">Share a ride</button>
-    <!-- when clicked call offerTaxi function-->
-    <button onclick="this.requestTaxi = function(){}">Request a ride</button>
-    <!-- when clicked call offerTaxi function-->
-    <button onclick="this.cancel = function (){}">Cancel all offers/requests</button>
-    <!-- when clicked call offerTaxi function-->
-    <button onclick="this.updateMap = function(){}">Update map</button>
+    <!-- when clicked call offerTaxi public function -->
+    <button onclick="controller.offerTaxi()">Share a ride</button>
+    <!-- when clicked call requestTaxi public function -->
+    <button onclick="controller.requestTaxi()">Request a ride</button>
+    <!-- when clicked call cancel public function -->
+    <button onclick="controller.cancel()">Cancel all offers/requests</button>
+    <!-- when clicked call updateMap public function -->
+    <button onclick="controller.updateMap">Update map</button>
   </div>
   <!--- TODO: add a placeholder for the HERE Map -->
   <div id="mapContainer" style="height: 375px;"></div>

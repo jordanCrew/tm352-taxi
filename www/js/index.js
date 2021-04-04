@@ -40,7 +40,7 @@ function TaxiShare() {
     var BASE_URL = BASE_GET_URL;
     if (cordova.platformId === "browser") {
         // Work around Taxi Sharing API POST/DELETE CORS errors on browser platform
-        BASE_URL = "https://cors-anywhere.herokuapp.com/" + BASE_URL;
+        // BASE_URL = "https://cors-anywhere.herokuapp.com/" + BASE_URL;
     }
 
     // HERE Maps code, based on:
