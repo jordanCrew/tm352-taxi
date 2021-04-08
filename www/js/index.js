@@ -40,7 +40,7 @@ function TaxiShare() {
     var BASE_URL = BASE_GET_URL;
     if (cordova.platformId === "browser") {
         // Work around Taxi Sharing API POST/DELETE CORS errors on browser platform
-        BASE_URL = "https://cors-anywhere.herokuapp.com/" + BASE_URL;
+        // BASE_URL = "https://cors-anywhere.herokuapp.com/" + BASE_URL;
     }
 
     // HERE Maps code, based on:
@@ -50,7 +50,7 @@ function TaxiShare() {
     // Initialize the platform object:
     var platform = new H.service.Platform({
         // TODO: Change to your own API key or map will NOT work!
-        apikey: "YOUR_API_KEY_HERE",
+        apikey: "5-aCFtXk2uudrb9TUh0jyYWlJAxDsFBPfN156lPD-KY",
     });
     // Obtain the default map types from the platform object:
     var defaultLayers = platform.createDefaultLayers();
@@ -98,6 +98,14 @@ function TaxiShare() {
 
                 // Hint: If you can't see the markers on the map if using the browser platform,
                 //       try refreshing the page.
+                console.log("OpenStreetMap: received obj", data);
+
+                    var lat = data[0].lat;
+                    var lon = data[0].lon;
+
+                    markers.push(map.addObject(new H.map.Marker({ lat: lat, lng: lon })));
+                    console.log("marker added");
+
             };
 
             // Hint: We have provided the helper function nominatim.get which uses
@@ -105,6 +113,7 @@ function TaxiShare() {
             //       It does this in such a way that requests are cached and sent to
             //       the OpenStreetMap REST API no more than once every 5 seconds.
             nominatim.get(address, onSuccess);
+
         }
     }
 
@@ -149,7 +158,7 @@ function TaxiShare() {
     // TODO Update the map with addresses for orders from the Taxi Sharing API
     function updateMap() {
         // TODO adjust the following to get the required data from your HTML view
-        var oucu = getInputValue("oucu", "user1");
+        var oucu = getInputValue("oucu", "jmc2228");
 
         // TODO 2(a) FR2.1
         // You need to implement this function
@@ -159,6 +168,31 @@ function TaxiShare() {
         // Hint: If you cannot complete FR2.1, call addMarkerToMap with a fixed value
         //       to allow yourself to move on to FR2.2.
         //       e.g. addMarkerToMap("Milton Keynes Central");
+
+        clearMarkersFromMap();
+
+        function onSuccess(data) {
+            var obj = JSON.parse(data); // Taxi API responses must be manually converted to JSON
+            console.log("matches: received obj", obj);
+
+            // Inform the user what happened
+            if (obj.status == "success") {
+                for (var i = 0; i < obj.data.length; i++) {
+                    var address = obj.data[i].offer_address;
+                    addMarkerToMap(address);
+                };
+                alert("Map updated");
+            } else if (obj.message) {
+                alert(obj.message);
+            } else {
+                alert(obj.status + " " + obj.data[0].reason);
+            }
+        }
+
+        // Post the OUCU to register with the Taxi Sharing API
+        var url = BASE_URL + "matches";
+        console.log("matches: sending GET to " + url);
+        $.ajax(url, { type: "GET", data: { oucu: oucu }, success: onSuccess });
     }
 
     // Register OUCU with the taxi sharing service
@@ -194,6 +228,36 @@ function TaxiShare() {
         // TODO 2(a) FR1.1
         // You need to implement this function
         // See the TMA for an explanation of the functional requirements
+
+        // Creating form data and append values passed as parameters
+        var formData = new FormData();
+        formData.append("oucu", oucu);
+        formData.append("type", "0");
+        formData.append("address", address);
+        formData.append("start", startTime);
+        formData.append("end", endTime);
+
+        var url = BASE_URL + "orders";
+        var xhr = new XMLHttpRequest();
+
+        // alert the response to the user and include the message
+        xhr.onload = function () {
+            var obj = JSON.parse(xhr.responseText); // Taxi API responses must be manually converted to JSON
+            console.log("offer: received obj", obj);
+
+            if (obj.status == "success") {
+                alert("User " + oucu + " has made a successful offer")
+
+            } else if (obj.message) {
+                alert(obj.message);
+            } else {
+                alert(obj.status + " " + obj.data[0].reason);
+            }
+        }
+
+        xhr.open("POST", url, true);
+        xhr.send(formData);
+        console.log("offer: sending post to " + url);
     }
 
     // TODO Request an offered taxi for the given OUCU
@@ -201,6 +265,35 @@ function TaxiShare() {
         // TODO 2(a) FR1.2
         // You need to implement this function
         // See the TMA for an explanation of the functional requirements
+
+        // Creating form data and append values passed as parameters
+        var formData = new FormData();
+        formData.append("oucu", oucu);
+        formData.append("type", "1");
+        formData.append("address", address);
+        formData.append("start", startTime);
+
+        var url = BASE_URL + "orders";
+        var xhr = new XMLHttpRequest();
+
+        // alert the response to the user and include the message
+        xhr.onload = function () {
+            var obj = JSON.parse(xhr.responseText); // Taxi API responses must be manually converted to JSON
+            console.log("request: received obj", obj);
+
+            if (obj.status == "success") {
+                alert("User " + oucu + " has made a successful request")
+
+            } else if (obj.message) {
+                alert(obj.message);
+            } else {
+                alert(obj.status + " " + obj.data[0].reason);
+            }
+        }
+
+        xhr.open("POST", url, true);
+        xhr.send(formData);
+        console.log("request: sending post to " + url);
     }
 
     // Cancel all orders (offers and requests) for the given OUCU
@@ -267,7 +360,7 @@ function TaxiShare() {
     this.registerUser = function () {
         // 2(a) FR3
         // TODO adjust the following to get the OUCU from your HTML view
-        var oucu = getInputValue("oucu", "user1");
+        var oucu = getInputValue("oucu", "jmc2228");
 
         // Call the model using values from the view
         register(oucu);
@@ -278,7 +371,7 @@ function TaxiShare() {
         var defaultStartTime = convertToOrderTime(new Date());
 
         // TODO adjust the following to get the required data from your HTML view
-        var oucu = getInputValue("oucu", "user1");
+        var oucu = getInputValue("oucu", "jmc2228");
         var address = getInputValue("addr", "Milton Keynes Central Station");
         var startTime = getInputValue("time", defaultStartTime); // eg. 2020:12:18:14:38
         var hours = getInputValue("hours", "1"); // duration in hours
@@ -306,6 +399,9 @@ function TaxiShare() {
         // ...convert back to an end time string
         var endTime = convertToOrderTime(endDate);
 
+        startTime = new Date(startTime);
+        startTime = formatDate(startTime, "yyyy:MM:dd:HH:mm", false);
+
         // Call the model using values from the view
         offer(oucu, address, startTime, endTime);
     };
@@ -313,9 +409,12 @@ function TaxiShare() {
     // Controller function for user to request to share an offered taxi
     this.requestTaxi = function () {
         // TODO adjust the following to get the required data from your HTML view
-        var oucu = getInputValue("oucu", "user1");
+        var oucu = getInputValue("oucu", "jmc2228");
         var address = getInputValue("addr", "Open University, Milton Keynes");
         var startTime = getInputValue("time", convertToOrderTime(new Date()));
+
+        startTime = new Date(startTime);
+        startTime = formatDate(startTime, "yyyy:MM:dd:HH:mm", false);
 
         // Call the model using values from the view
         request(oucu, address, startTime);
@@ -324,7 +423,7 @@ function TaxiShare() {
     // Controller function for user to cancel all their offers and requests
     this.cancel = function () {
         // TODO adjust the following to get the required data from your HTML view
-        var oucu = getInputValue("oucu", "user1");
+        var oucu = getInputValue("oucu", "jmc2228");
 
         // Call the model using values from the view
         cancel(oucu);
