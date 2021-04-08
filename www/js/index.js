@@ -98,6 +98,14 @@ function TaxiShare() {
 
                 // Hint: If you can't see the markers on the map if using the browser platform,
                 //       try refreshing the page.
+                console.log("OpenStreetMap: received obj", data);
+
+                    var lat = data[0].lat;
+                    var lon = data[0].lon;
+
+                    markers.push(map.addObject(new H.map.Marker({ lat: lat, lng: lon })));
+                    console.log("marker added");
+
             };
 
             // Hint: We have provided the helper function nominatim.get which uses
@@ -105,6 +113,7 @@ function TaxiShare() {
             //       It does this in such a way that requests are cached and sent to
             //       the OpenStreetMap REST API no more than once every 5 seconds.
             nominatim.get(address, onSuccess);
+
         }
     }
 
@@ -151,8 +160,6 @@ function TaxiShare() {
         // TODO adjust the following to get the required data from your HTML view
         var oucu = getInputValue("oucu", "jmc2228");
 
-        clearMarkersFromMap();
-
         // TODO 2(a) FR2.1
         // You need to implement this function
         // See the TMA for an explanation of the functional requirements
@@ -161,6 +168,31 @@ function TaxiShare() {
         // Hint: If you cannot complete FR2.1, call addMarkerToMap with a fixed value
         //       to allow yourself to move on to FR2.2.
         //       e.g. addMarkerToMap("Milton Keynes Central");
+
+        clearMarkersFromMap();
+
+        function onSuccess(data) {
+            var obj = JSON.parse(data); // Taxi API responses must be manually converted to JSON
+            console.log("matches: received obj", obj);
+
+            // Inform the user what happened
+            if (obj.status == "success") {
+                for (var i = 0; i < obj.data.length; i++) {
+                    var address = obj.data[i].offer_address;
+                    addMarkerToMap(address);
+                };
+                alert("Map updated");
+            } else if (obj.message) {
+                alert(obj.message);
+            } else {
+                alert(obj.status + " " + obj.data[0].reason);
+            }
+        }
+
+        // Post the OUCU to register with the Taxi Sharing API
+        var url = BASE_URL + "matches";
+        console.log("matches: sending GET to " + url);
+        $.ajax(url, { type: "GET", data: { oucu: oucu }, success: onSuccess });
     }
 
     // Register OUCU with the taxi sharing service
@@ -233,14 +265,14 @@ function TaxiShare() {
         // TODO 2(a) FR1.2
         // You need to implement this function
         // See the TMA for an explanation of the functional requirements
-        
+
         // Creating form data and append values passed as parameters
         var formData = new FormData();
         formData.append("oucu", oucu);
         formData.append("type", "1");
         formData.append("address", address);
         formData.append("start", startTime);
-        
+
         var url = BASE_URL + "orders";
         var xhr = new XMLHttpRequest();
 
